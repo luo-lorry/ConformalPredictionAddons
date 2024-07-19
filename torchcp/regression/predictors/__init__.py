@@ -11,3 +11,4 @@ from .aci import ACI
 from .cqr import CQR
 from .split import SplitPredictor
 from .r2ccp import R2CCP
+from .cti import CTI
