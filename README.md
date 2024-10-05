@@ -1,148 +1,119 @@
-TorchCP is a Python toolbox for conformal prediction research on deep learning models, using PyTorch. Specifically, this
-toolbox has implemented some representative methods (including posthoc and training methods) for
-classification and regression tasks. We build the framework of TorchCP based
-on [`AdverTorch`](https://github.com/BorealisAI/advertorch/tree/master). This codebase is still under construction and
-maintained by [`Hongxin Wei`](https://hongxin001.github.io/)'s research group at SUSTech.
-Comments, issues, contributions, and collaborations are all welcomed!
+This repository contains code implementations for the following conformal prediction methods:
+* [**Conformal Thresholded Intervals for Efficient Regression**](https://arxiv.org/abs/2407.14495)
+* [**Entropy Reweighted Conformal Classification**](https://proceedings.mlr.press/v230/luo24a.html)
 
-# Overview
+This project is built upon the Python toolbox [TorchCP](https://github.com/ml-stat-Sustech/TorchCP).
 
-TorchCP has implemented the following methods:
+# Conformal Thresholded Intervals (CTI) for Efficient Regression
 
-## Classification
+This paper introduces **Conformal Thresholded Intervals (CTI)**, a novel conformal regression method that aims to produce the smallest possible prediction set with guaranteed coverage.
 
-| Year | Title                                                                                                                                            | Venue              | Code Link                                                                         | Implementation                      |
-|------|--------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|-----------------------------------------------------------------------------------|-------------------------------------|
-| 2023 | [**Class-Conditional Conformal Prediction with Many Classes**](https://arxiv.org/abs/2306.09335)                                                 | NeurIPS            | [Link](https://github.com/tiffanyding/class-conditional-conformal)                | classification.predictors.cluster   |
-| 2023 | [**Conformal Prediction for Deep Classifier via Label Ranking**](https://arxiv.org/abs/2310.06430)                                               | Arxiv              | [Link](https://github.com/ml-stat-Sustech/conformal_prediction_via_label_ranking) | classification.scores.saps          |
-| 2021 | [**Learning Optimal Conformal Classifiers**](https://arxiv.org/abs/2110.09192)                                                                   | ICLR               | [Link](https://github.com/google-deepmind/conformal_training/tree/main)           | classification.loss.conftr          |       
-| 2020 | [**Uncertainty Sets for Image Classifiers using Conformal Prediction**](https://arxiv.org/abs/2009.14193       )                                 | ICLR               | [Link](https://github.com/aangelopoulos/conformal_classification)                 | classification.scores.raps          |
-| 2020 | [**Classification with Valid and Adaptive Coverage**](https://proceedings.neurips.cc/paper/2020/file/244edd7e85dc81602b7615cd705545f5-Paper.pdf) | NeurIPS            | [Link](https://github.com/msesia/arc)                                             | classification.scores.aps           |
-| 2019 | [**Conformal Prediction Under Covariate Shift**](https://arxiv.org/abs/1904.06019)                                                               | NeurIPS            | [Link](https://github.com/ryantibs/conformal/)                                    | classification.predictors.weight    |
-| 2016 | [**Least Ambiguous Set-Valued Classifiers with Bounded Error Levels**](https://arxiv.org/abs/1609.00451)                                         | JASA               |                                                                                   | classification.scores.thr           |
-| 2015 | [**Bias reduction through conditional conformal prediction**](https://dl.acm.org/doi/abs/10.3233/IDA-150786)                                     | Intell. Data Anal. |                                                                                   | classification.scores.margin        |
-| 2013 | [**Applications of Class-Conditional Conformal Predictor in Multi-Class Classification**](https://ieeexplore.ieee.org/document/6784618)          | ICMLA              |                                                                                   | classification.predictors.classwise |
+## Key Points
 
-## Regression
+1. Utilizes multi-output quantile regression to estimate conditional interquantile intervals.
+2. Constructs prediction sets by thresholding these intervals based on their length.
+3. Guarantees marginal coverage and can achieve optimal conditional coverage under certain conditions.
+4. Computationally efficient and avoids estimating full conditional distributions.
+5. Produces potentially non-convex prediction sets that adapt to local data density.
 
-| Year | Title                                                                                                                                           | Venue                | Code Link                                              | Implementation              |
-|------|-------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|--------------------------------------------------------|-----------------------------|
-| 2023 | [**Conformal Prediction via Regression-as-Classification**](http://etash.me/papers/Bayesian_Conformal_Prediction_through_Memory_Adaptation.pdf) | RegML @ NeurIPS 2023 | [link](https://github.com/EtashGuha/R2CCP/tree/master) | regression.predictors.r2ccp |
-| 2021 | [**Adaptive Conformal Inference Under Distribution Shift**](https://arxiv.org/abs/2106.00170)                                                   | NeurIPS              | [Link](https://github.com/isgibbs/AdaptiveConformal)   | regression.predictors.aci   |
-| 2019 | [**Conformalized Quantile Regression**](https://proceedings.neurips.cc/paper_files/paper/2019/file/5103c3584b063c431bd1268e9b5e76fb-Paper.pdf)  | NeurIPS              | [Link](https://github.com/yromano/cqr)                 | regression.predictors.cqr   |
-| 2016 | [**Distribution-Free Predictive Inference For Regression**](https://arxiv.org/abs/1604.04173)                                                   | JASA                 | [Link](https://github.com/ryantibs/conformal)          | regression.predictors.split |
+## Key Definitions
 
-## TODO
+**Interquantile intervals:**
+$I_k(x) = (q_{k-1}(x), q_k(x)] \quad \text{for } k = 1, \dots, K$
 
-TorchCP is still under active development. We will add the following features/items down the road:
+**Prediction set:**
+$C(x) = \bigcup \{ I_k(x) \mid \mu(I_k(x)) \leq t, k = 1, \dots, K \}$
 
-| Year | Title                                                                                                                                           | Venue                | Code Link                                                                  |
-|------|-------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|----------------------------------------------------------------------------|
-| 2022 | [**Training Uncertainty-Aware Classifiers with Conformalized Deep Learning**](https://arxiv.org/abs/2205.05878)                                 | NeurIPS              | [Link](https://github.com/bat-sheva/conformal-learning)                    |
-| 2022 | [**Adaptive Conformal Predictions for Time Series**](https://arxiv.org/abs/2202.07282)                                                          | ICML                 | [Link](https://github.com/mzaffran/AdaptiveConformalPredictionsTimeSeries) |
-| 2022 | [**Predictive Inference with Feature Conformal Prediction**](https://arxiv.org/abs/2210.00173)                                                  | ICLR                 | [Link](https://github.com/AlvinWen428/FeatureCP)                           |
-| 2022 | [**Conformal Prediction Sets with Limited False Positives**](https://arxiv.org/abs/2202.07650)                                                  | ICML                 | [Link](https://github.com/ajfisch/conformal-fp)                            |
-| 2021 | [**Optimized conformal classification using gradient descent approximation**](https://arxiv.org/abs/2105.11255)                                 | Arxiv                |                                                                            |
+Where:
+- $q_k(x)$ = estimated $k/K$ quantile
+- $t$ = threshold determined on calibration set
+- $\mu$ = Lebesgue measure
 
-## Installation
+## Algorithm Overview
 
-TorchCP is developed with Python 3.9 and PyTorch 2.0.1. To install TorchCP, simply run
+1. Train a quantile regression model on training data.
+2. Estimate interquantile intervals on calibration and test data.
+3. Determine threshold $t$ using the calibration set.
+4. Construct prediction sets for test points by thresholding intervals.
+
+## Theoretical Guarantees
+
+- **Marginal coverage:** $P(Y \in C(X)) \geq 1 - \alpha$
+- Can achieve optimal conditional coverage and smallest expected prediction set size under certain conditions.
+
+# Entropy Reweighted Conformal Classification
+
+This paper proposes **Entropy Reweighted Conformal Classification**, a novel approach to improve the efficiency of prediction sets in conformal classification.
+
+## Key Points
+
+1. Leverages the uncertainty of the classifier by using entropy-based reweighting.
+2. Applies a reweighting to the logits of the classification model based on the entropy of the predicted probability distribution.
+3. The reweighted logits are defined as:
+   $\tilde{z}_k(X) = \frac{z_k(X)}{H(X) \cdot T}$
+   where:
+   - $z_k(X)$ = original logit
+   - $H(X)$ = entropy of the predicted probability distribution
+   - $T$ = temperature parameter
+4. The reweighted probabilities are obtained by applying the softmax function to the reweighted logits:
+   $\tilde{f}_k(X) = \frac{\exp(\tilde{z}_k(X))}{\sum_j \exp(\tilde{z}_j(X))}$
+5. These reweighted probabilities are used to compute the conformity scores for conformal prediction.
+6. The temperature parameter $T$ is optimized using cross-validation on a separate validation set.
+7. Aims to improve the efficiency of prediction sets while maintaining the coverage guarantees of conformal prediction.
+8. Experimental results on various datasets (AG News, CAREER, MNIST, Fashion MNIST) demonstrate improved performance in terms of prediction efficiency and accuracy compared to existing techniques.
+
+## Key Definitions
+
+**Prediction Set:**
+```math
+C_A = \{ y_{N+1} \in \mathcal{Y} |\sum_{n \in \mathcal{I}_2} \mathbb{1}(A_n \leq A_{N+1}) \leq n\alpha \} = \{ y_{N+1} \in \mathcal{Y} | A_{N+1} \leq Q_A \}
+```
+Where:
+- $A_n = a(f(X_n), Y_n)$, conformity score
+- $A_{N+1} = a(f(X_{N+1}), y_{N+1})$
+- $Q_A$ is the $(1-\alpha)$-th sample quantile of $A_1, \dots, A_N$
+- $n\alpha = \lceil (1-\alpha)(|\mathcal{I}_2| + 1) \rceil$
+
+**Adaptive Prediction Sets (APS) Score:**
+$A_n = a(f(X_n), Y_n) = \sum_{i=1}^{r(Y_n, f(X_n)) - 1} f_{(i)}(X_n) + U f_{(r(Y_n, f(X_n)))}(X_n)$
+
+Where:
+- $f_{(i)}(X_n)$ denotes the $i$-th largest element of the probability vector $f(X_n)$.
+- $r(Y_n, f(X_n))$ is the rank of the true label $Y_n$ in the probability vector $f(X_n)$.
+- $U \sim \text{Uniform}(0,1)$ is independent of everything else.
+
+## Algorithm Overview
+
+1. Train a classification model $f$ on training data.
+2. Compute entropy $H(X)$ for each data point.
+3. Apply entropy-based reweighting to logits.
+4. Compute reweighted probabilities.
+5. Calculate conformity scores using reweighted probabilities.
+6. Construct prediction sets using the conformal prediction framework.
+7. Optimize the temperature parameter $T$ using cross-validation.
+
+## Theoretical Guarantees
+
+- **Marginal coverage:** $\mathbb{P}(Y_{N+1} \in C(X_{N+1})) \geq 1 - \alpha$
+- Maintains the validity of conformal prediction while improving efficiency.
+
+This approach integrates accurate uncertainty quantification with the coverage guarantees of conformal prediction, addressing limitations observed in previous attempts to combine confidence calibration with conformal prediction.
+
 
 ```
-pip install torchcp
-```
-
-To install from TestPyPI server, run
-
-```
-pip install --index-url https://test.pypi.org/simple/ --no-deps torchcp
-```
-
-## Examples
-
-Here, we provide a simple example for a classification task, with THR score and SplitPredictor.
-
-```python
-from torchcp.classification.scores import THR
-from torchcp.classification.predictors import SplitPredictor
-
-# Preparing a calibration data and a test data.
-cal_dataloader = ...
-test_dataloader = ...
-# Preparing a pytorch model
-model = ...
-
-model.eval()
-
-# Options of score function: THR, APS, SAPS, RAPS
-# Define a conformal prediction algorithm. Optional: SplitPredictor, ClusteredPredictor, ClassWisePredictor
-predictor = SplitPredictor(score_function=THR(), model=model)
-
-# Calibrating the predictor with significance level as 0.1
-predictor.calibrate(cal_dataloader, alpha=0.1)
-
-#########################################
-# Predicting for test instances
-########################################
-test_instances = ...
-predict_sets = predictor.predict(test_instances)
-print(predict_sets)
-
-#########################################
-# Evaluating the coverage rate and average set size on a given dataset.
-########################################
-result_dict = predictor.evaluate(test_dataloader)
-print(result_dict["Coverage_rate"], result_dict["Average_size"])
-
-```
-
-You may find more tutorials in [`examples`](https://github.com/ml-stat-Sustech/TorchCP/tree/master/examples) folder.
-
-## Documentation
-
-The documentation webpage is on readthedocs https://torchcp.readthedocs.io/en/latest/index.html.
-
-## License
-
-This project is licensed under the LGPL. The terms and conditions can be found in the LICENSE and LICENSE.GPL files.
-
-## Citation
-
-If you find our repository useful for your research, please consider citing the following [technical report](https://arxiv.org/abs/2402.12683):
-
-```
-@misc{wei2024torchcp,
-      title={TorchCP: A Library for Conformal Prediction based on PyTorch}, 
-      author={Hongxin Wei and Jianguo Huang},
-      year={2024},
-      eprint={2402.12683},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG}
-}
-```
-We welcome you to cite the following works:
-```
-@article{huang2023conformal,
-  title={Conformal Prediction for Deep Classifier via Label Ranking},
-  author={Huang, Jianguo and Xi, Huajun and Zhang, Linjun and Yao, Huaxiu and Qiu, Yue and Wei, Hongxin},
-  journal={arXiv preprint arXiv:2310.06430},
-  year={2023}
+@inproceedings{luo2024entropy,
+  title={Entropy Reweighted Conformal Classification},
+  author={Luo, Rui and Colombo, Nicolo},
+  booktitle={The 13th Symposium on Conformal and Probabilistic Prediction with Applications},
+  pages={264--276},
+  year={2024},
+  organization={PMLR}
 }
 
-@article{xi2024does,
-  title={Does Confidence Calibration Help Conformal Prediction?},
-  author={Xi, Huajun and Huang, Jianguo and Feng, Lei and Wei, Hongxin},
-  journal={arXiv preprint arXiv:2402.04344},
+@article{luo2024conformal,
+  title={Conformal Thresholded Intervals for Efficient Regression},
+  author={Luo, Rui and Zhou, Zhixin},
+  journal={arXiv preprint arXiv:2407.14495},
   year={2024}
 }
 ```
-
-## Contributors
-
-* [Hongxin Wei](https://hongxin001.github.io/)
-* [Jianguo Huang](https://jianguo99.github.io/)
-* [Xuanning Zhou](https://github.com/Shinning-Zhou)
-
-
-
-
