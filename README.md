@@ -99,7 +99,7 @@ Where:
 
 This approach integrates accurate uncertainty quantification with the coverage guarantees of conformal prediction, addressing limitations observed in previous attempts to combine confidence calibration with conformal prediction.
 
-
+# Reference
 ```
 @inproceedings{luo2024entropy,
   title={Entropy Reweighted Conformal Classification},
