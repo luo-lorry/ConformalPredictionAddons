@@ -6,8 +6,9 @@
 #
 
 import math
-import torch
+
 import numpy as np
+import torch
 
 from torchcp.regression.utils.metrics import Metrics
 from torchcp.utils.common import calculate_conformal_value
@@ -26,25 +27,6 @@ def correct_interval_sizes(sizes):
     corrected_sizes = np.where(mask.T, left_max, right_max)
 
     return corrected_sizes
-
-def make_increasing_matrix(matrix):
-    # Find the indices where each row is not increasing
-    indices = np.where(np.diff(matrix, axis=1) <= 0)
-
-    # Generate random values for the identified indices
-    random_values = np.random.uniform(1e-6, 1e-5, size=len(indices[0]))
-
-    # Create a new matrix to store the modified values
-    modified_values = np.zeros_like(matrix)
-    modified_values[indices] = random_values
-
-    # Compute the cumulative sum of the modified values along each row
-    cumulative_sum = np.cumsum(modified_values, axis=1)
-
-    # Add the cumulative sum to the original matrix
-    matrix += cumulative_sum
-
-    return matrix
 
 class CTI():
 
@@ -70,7 +52,7 @@ class CTI():
         tmp_labels_expanded = np.tile(tmp_labels, (m - 1, 1)).T
         # Check if each label is within the corresponding intervals
         mask = np.logical_and(tmp_labels_expanded >= tmp_predicts[:, :-1],
-                              tmp_labels_expanded <= tmp_predicts[:, 1:])
+                              tmp_labels_expanded < tmp_predicts[:, 1:])
         # Find the indices of the first True value in each row (first containing interval)
         indices = mask.argmax(axis=1)
         # Set indices to None where no containing interval is found
@@ -133,4 +115,3 @@ class CTI():
         }
 
         return res_dict
-        
